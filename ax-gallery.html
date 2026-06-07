@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AX 과제 갤러리 — 부서별 AI 적용 사례</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F0F4F8;
+  --surface: #FFFFFF;
+  --primary: #2563EB;
+  --primary-light: #DBEAFE;
+  --primary-dark: #1D4ED8;
+  --text: #1E293B;
+  --text-muted: #64748B;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-hover: 0 16px 32px rgba(0,0,0,0.12), 0 6px 16px rgba(37,99,235,0.1);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.logo {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 13px; font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.header-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.header-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.pill {
+  background: var(--primary-light); color: var(--primary);
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+}
+
+/* ── MAIN ── */
+.main { max-width: 1340px; margin: 0 auto; padding: 24px 28px 40px; }
+
+/* ── HERO ── */
+.hero { margin-bottom: 24px; }
+.hero h1 {
+  font-size: 22px; font-weight: 800; color: var(--text);
+  margin-bottom: 6px; letter-spacing: -0.5px;
+}
+.hero p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+.stat {
+  background: var(--surface); border-radius: var(--radius);
+  padding: 18px 20px; box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 14px;
+}
+.stat-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 3px; }
+.stat-val { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; }
+.stat-val span { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+
+/* ── FILTERS ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  padding: 12px 18px; margin-bottom: 22px;
+}
+.filter-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-right: 3px; flex-shrink: 0; }
+.fbtn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 13px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s ease;
+  font-family: inherit; white-space: nowrap;
+}
+.fbtn:hover { background: var(--bg); color: var(--text); border-color: #CBD5E1; }
+.fbtn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.fbtn .cnt {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 10px; font-size: 10px; font-weight: 700;
+  background: rgba(0,0,0,0.08); color: inherit;
+}
+.fbtn.on .cnt { background: rgba(255,255,255,0.25); }
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); border: 1px solid var(--border);
+  overflow: hidden; cursor: pointer;
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease, border-color 0.2s ease;
+  display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(37,99,235,0.15);
+}
+
+/* Card thumbnail */
+.thumb {
+  width: 100%; aspect-ratio: 2 / 1.1;
+  overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb svg { width: 100%; height: 100%; display: block; }
+
+/* Card body */
+.cbody { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+.dept-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  margin-bottom: 9px; width: fit-content;
+}
+.cname { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+.cdesc { font-size: 12px; color: var(--text-muted); line-height: 1.6; flex: 1; margin-bottom: 13px; }
+.cfoot { display: flex; align-items: center; justify-content: space-between; }
+.sbadge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; color: #059669;
+  background: #D1FAE5; padding: 3px 9px; border-radius: 12px;
+}
+.sdot { width: 5px; height: 5px; border-radius: 50%; background: #059669; }
+.btn-run {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 700; color: var(--primary);
+  background: var(--primary-light); padding: 5px 12px; border-radius: 8px;
+  transition: all 0.15s ease;
+}
+.card:hover .btn-run { background: var(--primary); color: #fff; }
+
+/* empty */
+.empty {
+  grid-column: 1 / -1; text-align: center; padding: 60px 20px;
+  color: var(--text-muted); font-size: 15px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding: 28px 20px 20px;
+  font-size: 11px; color: var(--text-muted);
+  border-top: 1px solid var(--border); margin-top: 32px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1140px) { .grid { grid-template-columns: repeat(3, 1fr); } .stats { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 820px)  { .grid { grid-template-columns: repeat(2, 1fr); } .main { padding: 18px 14px 32px; } .header { padding: 0 14px; } }
+@media (max-width: 480px)  { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">AX</div>
+    <div>
+      <div class="header-title">AX 과제 갤러리</div>
+      <div class="header-sub">부서별 AI 적용 사례 데모</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="pill" id="hpill">14건 사례</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>⚡ AX(AI Transformation) 과제 데모 갤러리</h1>
+    <p>중소·중견 전자제조(스마트폰·TV 부품)·배터리 제조·소비자 전자제품 기업 전 부서의 AI 적용 과제 예시입니다.<br>카드를 클릭하면 실제 데모 앱이 바로 실행됩니다. 경영층·임원·팀장·AX PMO·AI Crew 교육 및 데모에 활용하세요.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-icon" style="background:#DBEAFE;">📋</div>
+      <div>
+        <div class="stat-label">전체 사례</div>
+        <div class="stat-val" id="sv-total">14<span>건</span></div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:#D1FAE5;">✅</div>
+      <div>
+        <div class="stat-label">데모 실행 가능</div>
+        <div class="stat-val">14<span>건</span></div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:#EDE9FE;">🏢</div>
+      <div>
+        <div class="stat-label">적용 부서</div>
+        <div class="stat-val">9<span>개</span></div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:#FEF3C7;">🤖</div>
+      <div>
+        <div class="stat-label">AI 활용 유형</div>
+        <div class="stat-val">6<span>종</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">🔍 부서 필터</span>
+    <button class="fbtn on" data-f="all">전체 <span class="cnt" id="fc-all">14</span></button>
+    <button class="fbtn" data-f="제조기술">⚙️ 제조기술 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="개발">💻 개발 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="품질">✅ 품질 <span class="cnt">2</span></button>
+    <button class="fbtn" data-f="영업">📊 영업 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="구매">🛒 구매 <span class="cnt">2</span></button>
+    <button class="fbtn" data-f="물류/자재관리">📦 물류/자재 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="인사">👥 인사 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="기획">📋 기획 <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="AX PMO">🚀 AX PMO <span class="cnt">1</span></button>
+    <button class="fbtn" data-f="기타">💡 기타 <span class="cnt">3</span></button>
+  </div>
+
+  <!-- CARDS GRID -->
+  <div class="grid" id="grid"></div>
+
+</main>
+
+<footer class="footer">
+  AX 추진 과제 (예시) · 경영자 및 리더십 특강 · AX 특강 &nbsp;|&nbsp; 전자제조·배터리·소비자 전자 전 부서 AI 적용 데모
+</footer>
+
+<script>
+/* ─── DEPT CONFIG ─── */
+const DC = {
+  '제조기술':    { color:'#1D4ED8', bg:'#DBEAFE', emoji:'⚙️' },
+  '개발':        { color:'#059669', bg:'#D1FAE5', emoji:'💻' },
+  '품질':        { color:'#0891B2', bg:'#CFFAFE', emoji:'✅' },
+  '영업':        { color:'#EA580C', bg:'#FFEDD5', emoji:'📊' },
+  '구매':        { color:'#D97706', bg:'#FEF3C7', emoji:'🛒' },
+  '물류/자재관리':{ color:'#78350F', bg:'#FDE68A', emoji:'📦' },
+  '인사':        { color:'#7C3AED', bg:'#EDE9FE', emoji:'👥' },
+  '기획':        { color:'#4F46E5', bg:'#E0E7FF', emoji:'📋' },
+  'AX PMO':      { color:'#DC2626', bg:'#FEE2E2', emoji:'🚀' },
+  '기타':        { color:'#9D174D', bg:'#FCE7F3', emoji:'💡' },
+};
+
+/* ─── SVG THUMBNAILS ─── */
+function thumb(t) {
+  const c = DC[t.dept]?.color || '#2563EB';
+  const bg = DC[t.dept]?.bg || '#DBEAFE';
+  const id = t.thumbId;
+
+  const svgs = {
+    /* 동작분석 & 라인밸런스 */
+    'mfg': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="18" y="48" width="46" height="58" rx="7" fill="${c}" opacity=".18"/>
+      <rect x="18" y="48" width="46" height="9" rx="4" fill="${c}" opacity=".6"/>
+      <rect x="80" y="55" width="46" height="51" rx="7" fill="${c}" opacity=".22"/>
+      <rect x="80" y="55" width="46" height="9" rx="4" fill="${c}" opacity=".65"/>
+      <rect x="142" y="44" width="46" height="62" rx="7" fill="${c}" opacity=".28"/>
+      <rect x="142" y="44" width="46" height="9" rx="4" fill="${c}" opacity=".7"/>
+      <rect x="204" y="52" width="46" height="54" rx="7" fill="${c}" opacity=".35"/>
+      <rect x="204" y="52" width="46" height="9" rx="4" fill="${c}" opacity=".75"/>
+      <line x1="64" y1="72" x2="80" y2="72" stroke="${c}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <line x1="126" y1="72" x2="142" y2="72" stroke="${c}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <line x1="188" y1="72" x2="204" y2="72" stroke="${c}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <circle cx="72" cy="72" r="3" fill="${c}" opacity=".7"/>
+      <circle cx="134" cy="72" r="3" fill="${c}" opacity=".7"/>
+      <circle cx="196" cy="72" r="3" fill="${c}" opacity=".7"/>
+      <rect x="18" y="118" width="232" height="22" rx="5" fill="${c}" opacity=".07"/>
+      <text x="134" y="133" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">동작 분석 · 라인 밸런스 최적화</text>`,
+
+    /* 인사규정 챗봇 */
+    'hr': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="18" y="18" width="160" height="30" rx="15" fill="${c}" opacity=".75"/>
+      <text x="98" y="38" text-anchor="middle" fill="white" font-size="11" font-family="'Noto Sans KR',sans-serif">인사규정 문의합니다</text>
+      <polygon points="18,48 26,38 26,48" fill="${c}" opacity=".75"/>
+      <rect x="82" y="58" width="170" height="30" rx="15" fill="white" stroke="${c}" stroke-width="1.5"/>
+      <text x="167" y="78" text-anchor="middle" fill="${c}" font-size="11" font-family="'Noto Sans KR',sans-serif">규정 안내해 드리겠습니다 😊</text>
+      <polygon points="252,88 252,68 244,88" fill="white" stroke="${c}" stroke-width="1.5"/>
+      <rect x="18" y="98" width="140" height="30" rx="15" fill="${c}" opacity=".75"/>
+      <text x="88" y="118" text-anchor="middle" fill="white" font-size="11" font-family="'Noto Sans KR',sans-serif">감사합니다! 🙏</text>
+      <polygon points="18,128 26,118 26,128" fill="${c}" opacity=".75"/>
+      <rect x="220" y="130" width="42" height="16" rx="8" fill="${c}" opacity=".15"/>
+      <text x="241" y="142" text-anchor="middle" fill="${c}" font-size="9" font-family="sans-serif">AI Bot</text>`,
+
+    /* PCB 수율 시뮬레이션 */
+    'dev': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="18" y="15" width="244" height="110" rx="8" fill="white" stroke="${c}" stroke-width="1.5" opacity=".8"/>
+      <circle cx="50" cy="45" r="8" fill="${c}" opacity=".25"/>
+      <circle cx="50" cy="45" r="5" fill="${c}" opacity=".5"/>
+      <circle cx="130" cy="38" r="8" fill="${c}" opacity=".25"/>
+      <circle cx="130" cy="38" r="5" fill="${c}" opacity=".5"/>
+      <circle cx="200" cy="50" r="8" fill="${c}" opacity=".25"/>
+      <circle cx="200" cy="50" r="5" fill="${c}" opacity=".5"/>
+      <line x1="50" y1="45" x2="130" y2="38" stroke="${c}" stroke-width="1.5" opacity=".35"/>
+      <line x1="130" y1="38" x2="200" y2="50" stroke="${c}" stroke-width="1.5" opacity=".35"/>
+      <line x1="50" y1="45" x2="50" y2="90" stroke="${c}" stroke-width="1.5" opacity=".35"/>
+      <line x1="130" y1="38" x2="130" y2="90" stroke="${c}" stroke-width="1.5" opacity=".35"/>
+      <line x1="200" y1="50" x2="200" y2="90" stroke="${c}" stroke-width="1.5" opacity=".35"/>
+      <rect x="28" y="82" width="22" height="30" rx="3" fill="${c}" opacity=".3"/>
+      <rect x="58" y="70" width="22" height="42" rx="3" fill="${c}" opacity=".4"/>
+      <rect x="108" y="76" width="22" height="36" rx="3" fill="${c}" opacity=".5"/>
+      <rect x="138" y="65" width="22" height="47" rx="3" fill="${c}" opacity=".6"/>
+      <rect x="178" y="58" width="22" height="54" rx="3" fill="${c}" opacity=".7"/>
+      <rect x="208" y="50" width="22" height="62" rx="3" fill="${c}" opacity=".8"/>
+      <text x="134" y="142" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">PCB 수율 예측 · 공정 최적화</text>`,
+
+    /* DOE 마스터 */
+    'doe': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="15" y="14" width="110" height="108" rx="7" fill="white" stroke="${c}" stroke-width="1.2" opacity=".9"/>
+      <text x="30" y="30" fill="${c}" font-size="9.5" font-weight="700" font-family="sans-serif">Run</text>
+      <text x="58" y="30" fill="${c}" font-size="9.5" font-weight="700" font-family="sans-serif">A</text>
+      <text x="78" y="30" fill="${c}" font-size="9.5" font-weight="700" font-family="sans-serif">B</text>
+      <text x="98" y="30" fill="${c}" font-size="9.5" font-weight="700" font-family="sans-serif">C</text>
+      <line x1="15" y1="35" x2="125" y2="35" stroke="${c}" stroke-width="0.6" opacity=".3"/>
+      ${[0,1,2,3,4,5,6,7].map(i=>`
+        <text x="32" y="${47+i*11}" fill="${c}" font-size="9" font-family="sans-serif" opacity=".8">${i+1}</text>
+        <text x="57" y="${47+i*11}" fill="${c}" font-size="10" font-family="sans-serif">${['-','+','-','+','-','+','-','+'][i]}</text>
+        <text x="77" y="${47+i*11}" fill="${c}" font-size="10" font-family="sans-serif">${['-','-','+','+','-','-','+','+'][i]}</text>
+        <text x="97" y="${47+i*11}" fill="${c}" font-size="10" font-family="sans-serif">${['-','-','-','-','+','+','+','+'][i]}</text>
+      `).join('')}
+      <rect x="140" y="14" width="128" height="108" rx="7" fill="white" stroke="${c}" stroke-width="1.2" opacity=".9"/>
+      <path d="M 152 112 L 165 88 L 175 95 L 190 72 L 205 80 L 220 55 L 235 62 L 255 42" stroke="${c}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="220" cy="55" r="4" fill="${c}"/>
+      <line x1="220" y1="14" x2="220" y2="122" stroke="${c}" stroke-width="1" stroke-dasharray="4,3" opacity=".4"/>
+      <text x="204" y="130" text-anchor="middle" fill="${c}" font-size="10.5" font-weight="700" font-family="'Noto Sans KR',sans-serif">최적 조건 탐색</text>`,
+
+    /* 판매 Dashboard */
+    'sales': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="14" y="14" width="72" height="36" rx="7" fill="${c}" opacity=".12"/>
+      <text x="50" y="27" text-anchor="middle" fill="${c}" font-size="9.5" font-weight="600" font-family="'Noto Sans KR',sans-serif">총 매출</text>
+      <text x="50" y="42" text-anchor="middle" fill="${c}" font-size="14" font-weight="800" font-family="sans-serif">₩2.4B</text>
+      <rect x="96" y="14" width="72" height="36" rx="7" fill="${c}" opacity=".12"/>
+      <text x="132" y="27" text-anchor="middle" fill="${c}" font-size="9.5" font-weight="600" font-family="'Noto Sans KR',sans-serif">성장률</text>
+      <text x="132" y="42" text-anchor="middle" fill="#059669" font-size="14" font-weight="800" font-family="sans-serif">+18.4%</text>
+      <rect x="178" y="14" width="88" height="36" rx="7" fill="${c}" opacity=".12"/>
+      <text x="222" y="27" text-anchor="middle" fill="${c}" font-size="9.5" font-weight="600" font-family="'Noto Sans KR',sans-serif">Top 판매처</text>
+      <text x="222" y="42" text-anchor="middle" fill="${c}" font-size="12" font-weight="800" font-family="sans-serif">1,240건</text>
+      ${[0,1,2,3,4,5,6].map((i)=>{
+        const hs=[36,50,42,62,48,68,56];
+        return `<rect x="${18+i*36}" y="${120-hs[i]}" width="26" height="${hs[i]}" rx="4" fill="${c}" opacity="${0.35+i*0.09}"/>`;
+      }).join('')}
+      <text x="140" y="142" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">판매 현황 대시보드</text>`,
+
+    /* 공정능력지수 */
+    'pca': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="16" y="16" width="248" height="108" rx="7" fill="white" stroke="${c}" stroke-width="1.2" opacity=".9"/>
+      <line x1="58" y1="16" x2="58" y2="124" stroke="#EF4444" stroke-width="1.8" stroke-dasharray="5,3" opacity=".7"/>
+      <line x1="222" y1="16" x2="222" y2="124" stroke="#EF4444" stroke-width="1.8" stroke-dasharray="5,3" opacity=".7"/>
+      <text x="58" y="133" text-anchor="middle" fill="#EF4444" font-size="10" font-family="sans-serif" font-weight="600">LSL</text>
+      <text x="222" y="133" text-anchor="middle" fill="#EF4444" font-size="10" font-family="sans-serif" font-weight="600">USL</text>
+      <path d="M 50 115 C 60 115 75 100 90 80 C 105 55 120 30 140 27 C 160 30 175 55 190 80 C 205 100 220 115 230 115 Z" stroke="${c}" stroke-width="2.2" fill="${c}" fill-opacity=".15"/>
+      <line x1="140" y1="27" x2="140" y2="124" stroke="${c}" stroke-width="1.2" stroke-dasharray="4,3" opacity=".5"/>
+      <text x="80" y="147" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">Cp: 1.67</text>
+      <text x="200" y="147" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">Cpk: 1.43</text>`,
+
+    /* 환율 모니터링 */
+    'fx': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="15" y="14" width="250" height="96" rx="7" fill="white" stroke="${c}" stroke-width="1.2" opacity=".9"/>
+      <text x="28" y="34" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">USD/KRW</text>
+      <text x="200" y="34" fill="#059669" font-size="12" font-weight="800" font-family="sans-serif">▲ 1,342</text>
+      <text x="28" y="56" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">JPY/KRW</text>
+      <text x="200" y="56" fill="#EF4444" font-size="12" font-weight="800" font-family="sans-serif">▼ 9.02</text>
+      <text x="28" y="78" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">EUR/KRW</text>
+      <text x="200" y="78" fill="#059669" font-size="12" font-weight="800" font-family="sans-serif">▲ 1,468</text>
+      <text x="28" y="100" fill="${c}" font-size="11" font-weight="700" font-family="sans-serif">CNY/KRW</text>
+      <text x="200" y="100" fill="#EF4444" font-size="12" font-weight="800" font-family="sans-serif">▼ 186</text>
+      <path d="M 15 128 L 40 122 L 70 130 L 100 118 L 135 124 L 165 112 L 200 117 L 240 108 L 265 111" stroke="${c}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+
+    /* 비철금속 시세 */
+    'metal': `<rect width="280" height="154" fill="${bg}"/>
+      ${[['Cu (구리)','8,420'],['Al (알루미늄)','2,395'],['Ni (니켈)','16,820'],['Zn (아연)','2,890']].map(([m,v],i)=>`
+        <text x="22" y="${30+i*28}" fill="${c}" font-size="10.5" font-weight="700" font-family="sans-serif">${m}</text>
+        <rect x="115" y="${19+i*28}" width="${[145,115,130,120][i]}" height="16" rx="5" fill="${c}" opacity="${0.25+i*0.08}"/>
+        <text x="${263}" y="${31+i*28}" text-anchor="end" fill="${c}" font-size="10.5" font-weight="700" font-family="sans-serif">$${v}</text>
+      `).join('')}
+      <text x="140" y="138" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">LME 비철금속 실시간 시세</text>`,
+
+    /* 퍼스널 컬러 */
+    'color': `<rect width="280" height="154" fill="${bg}"/>
+      ${['#FF6B6B','#FF9E7A','#FFD166','#06D6A0','#118AB2','#9B5DE5'].map((cl,i)=>`
+        <circle cx="${28+i*38}" cy="65" r="24" fill="${cl}" opacity=".85"/>
+      `).join('')}
+      <rect x="70" y="100" width="140" height="28" rx="7" fill="white" stroke="${c}" stroke-width="1.2" opacity=".9"/>
+      <text x="140" y="119" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">🎨 퍼스널 컬러 AI 분석</text>`,
+
+    /* 재고관리 */
+    'wh': `<rect width="280" height="154" fill="${bg}"/>
+      ${[0,1,2,3].map(r=>[0,1,2,3,4].map(col=>`
+        <rect x="${14+col*52}" y="${18+r*26}" width="44" height="20" rx="4" fill="${c}" opacity="${[[0.4,0.7,0.25,0.5,0.3],[0.6,0.3,0.55,0.4,0.7],[0.35,0.65,0.45,0.25,0.6],[0.5,0.4,0.7,0.35,0.55]][r][col]}"/>
+      `).join('')).join('')}
+      <text x="140" y="132" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">📦 스마트 재고 관리 시스템</text>`,
+
+    /* 논문 가이드 */
+    'thesis': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="68" y="14" width="144" height="108" rx="7" fill="white" stroke="${c}" stroke-width="1.5" opacity=".9"/>
+      <rect x="82" y="26" width="116" height="9" rx="3" fill="${c}" opacity=".6"/>
+      ${[0,1,2,3,4,5].map(i=>`<rect x="82" y="${42+i*13}" width="${[90,70,100,75,85,60][i]}" height="7" rx="2" fill="${c}" opacity=".18"/>`).join('')}
+      ${[['주제 선정','#2563EB'],['논문 작성','#7C3AED'],['발표·심사','#059669']].map(([s,cl],i)=>`
+        <rect x="${72+i*56}" y="108" width="50" height="18" rx="9" fill="${cl}" opacity=".8"/>
+        <text x="${97+i*56}" y="121" text-anchor="middle" fill="white" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">${s}</text>
+      `).join('')}`,
+
+    /* 기업 경쟁력 */
+    'cca': `<rect width="280" height="154" fill="${bg}"/>
+      ${[80,60,45].map((r,idx)=>`<polygon points="140,${77-r} ${140+r*0.866},${77+r*0.5} ${140+r*0.5},${77+r*0.866} ${140-r*0.5},${77+r*0.866} ${140-r*0.866},${77+r*0.5}" stroke="${c}" stroke-width="${1.5-idx*0.3}" fill="${c}" fill-opacity="${0.08+idx*0.05}"/>`).join('')}
+      <polygon points="140,${77-76} ${140+66},${77+38} ${140+40},${77+68} ${140-40},${77+68} ${140-66},${77+38}" stroke="${c}" stroke-width="2" fill="${c}" fill-opacity=".22"/>
+      <text x="140" y="9" text-anchor="middle" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">재무</text>
+      <text x="214" y="52" text-anchor="start" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">영업</text>
+      <text x="195" y="150" text-anchor="middle" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">운영</text>
+      <text x="88" y="150" text-anchor="middle" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">기술</text>
+      <text x="60" y="52" text-anchor="end" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif" font-weight="600">인재</text>`,
+
+    /* 인생 수레바퀴 */
+    'wheel': `<rect width="280" height="154" fill="${bg}"/>
+      ${[0,1,2,3,4,5,6,7].map(i=>{
+        const a=(i*45-90)*Math.PI/180;
+        const rs=[62,52,68,45,60,55,72,48];
+        const r=rs[i];
+        const x2=140+r*Math.cos(a), y2=77+r*Math.sin(a);
+        return `<line x1="140" y1="77" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${c}" stroke-width="4" stroke-linecap="round" opacity="${0.28+i*0.09}"/>`;
+      }).join('')}
+      <circle cx="140" cy="77" r="6" fill="${c}" opacity=".8"/>
+      ${[0,1,2,3,4,5,6,7].map(i=>{
+        const a=(i*45-90)*Math.PI/180;
+        const r=87;
+        const x=140+r*Math.cos(a), y=77+r*Math.sin(a);
+        const labels=['건강','가족','재무','커리어','학습','친구','여가','정신'];
+        return `<text x="${x.toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="middle" fill="${c}" font-size="9" font-family="'Noto Sans KR',sans-serif" font-weight="600">${labels[i]}</text>`;
+      }).join('')}`,
+
+    /* AX Platform */
+    'ax': `<rect width="280" height="154" fill="${bg}"/>
+      <rect x="14" y="14" width="252" height="116" rx="8" fill="white" stroke="${c}" stroke-width="1.5" opacity=".9"/>
+      <rect x="14" y="14" width="60" height="116" rx="8" fill="${c}" opacity=".85"/>
+      ${['과제','현황','팀원','설정'].map((t,i)=>`
+        <rect x="20" y="${32+i*24}" width="48" height="18" rx="5" fill="white" opacity="${i===0?0.25:0.1}"/>
+        <text x="44" y="${44+i*24}" text-anchor="middle" fill="white" font-size="10" font-family="'Noto Sans KR',sans-serif" font-weight="600">${t}</text>
+      `).join('')}
+      ${[0,1,2,3].map(i=>`
+        <rect x="84" y="${24+i*24}" width="170" height="16" rx="4" fill="${c}" opacity="${0.08+i*0.04}"/>
+        <rect x="84" y="${24+i*24}" width="5" height="16" rx="2" fill="${c}" opacity="${0.6-i*0.1}"/>
+        <text x="96" y="${36+i*24}" fill="${c}" font-size="9.5" font-family="'Noto Sans KR',sans-serif">과제 ${i+1}: AI 적용 사례</text>
+        <rect x="215" y="${27+i*24}" width="32" height="10" rx="5" fill="${['#059669','#D97706','#059669','#2563EB'][i]}" opacity=".8"/>
+        <text x="231" y="${36+i*24}" text-anchor="middle" fill="white" font-size="8" font-family="'Noto Sans KR',sans-serif">${['완료','진행중','완료','준비'][i]}</text>
+      `).join('')}
+      <text x="167" y="142" text-anchor="middle" fill="${c}" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">AX 과제 관리 플랫폼</text>`,
+  };
+
+  return `<svg viewBox="0 0 280 154" xmlns="http://www.w3.org/2000/svg">${svgs[id]||`<rect width="280" height="154" fill="${bg}"/><text x="140" y="85" text-anchor="middle" fill="${c}" font-size="40">${DC[t.dept]?.emoji||'🤖'}</text>`}</svg>`;
+}
+
+/* ─── TASK DATA ─── */
+const TASKS = [
+  { dept:'제조기술',  name:'동작분석 & 라인 밸런스 시스템',    url:'https://greeme99.github.io/mkj/vlm-prism',       desc:'VLM 기반 작업자 동작 분석으로 병목 공정을 파악하고 라인 밸런스를 자동 최적화합니다.', thumbId:'mfg'   },
+  { dept:'인사',      name:'인사규정 챗봇',                      url:'https://greeme99.github.io/hr_chabot/',          desc:'자연어로 인사규정을 검색·조회하는 AI 챗봇. 복잡한 규정을 즉시 안내해 드립니다.', thumbId:'hr'    },
+  { dept:'개발',      name:'PCB 수율 최적 시뮬레이션',           url:'https://greeme99.github.io/PCB-Yield-Visualizer/',desc:'AI 모델로 PCB 생산 수율을 예측하고 공정 파라미터를 최적화하는 시뮬레이터입니다.', thumbId:'dev'   },
+  { dept:'품질',      name:'실험계획법(DOE) 마스터',             url:'https://greeme99.github.io/DOE/doe/',            desc:'AI가 실험 설계(DOE)를 구성하고 결과를 분석하여 최적 공정 조건을 도출합니다.', thumbId:'doe'   },
+  { dept:'영업',      name:'판매현황 Dashboard',                 url:'https://greeme99.github.io/mkj/sales_dashboard', desc:'글로벌 판매 현황을 실시간 시각화하여 영업 기회와 리스크를 한눈에 파악합니다.', thumbId:'sales' },
+  { dept:'품질',      name:'공정능력지수 산출',                   url:'https://greeme99.github.io/mkj/pca',            desc:'측정 데이터를 업로드하면 Cp, Cpk를 자동 산출하고 공정 안정성을 진단합니다.', thumbId:'pca'   },
+  { dept:'구매',      name:'환율 현황 모니터링',                  url:'https://script.google.com/macros/s/AKfycbyykOIfCTfqnxxH_9pg3BdnkpbyliZEx5aRoFTX8i7I8ICGjfgxogLmIsaJASQbAq2URw/exec', desc:'USD·JPY·EUR·CNY 실시간 환율을 추적하고 구매 원가 영향을 자동 분석합니다.', thumbId:'fx' },
+  { dept:'구매',      name:'비철금속 시세 분석',                  url:'https://script.google.com/macros/s/AKfycbzARjJO5Pma7rbJa30HDzsw3ibusLN1goopON5fQ0YOn7oPMukojl9jsFYCv5s230HCDw/exec', desc:'LME 구리·알루미늄·니켈·아연 시세 트렌드 분석으로 최적 구매 타이밍을 지원합니다.', thumbId:'metal' },
+  { dept:'기타',      name:'Personal Color Analysis',            url:'https://personal-color-one.vercel.app/',         desc:'사진 한 장으로 AI가 퍼스널 컬러를 분석하고 날씨·기분별 패션 코디를 추천합니다.', thumbId:'color', subLabel:'나만의 컬러' },
+  { dept:'물류/자재관리', name:'재고관리 시스템',               url:'https://greeme99.github.io/mkj/swm.html',        desc:'스마트 창고 재고 현황을 실시간 시각화하고 AI가 발주 시점과 수량을 추천합니다.', thumbId:'wh' },
+  { dept:'기타',      name:'논문 101 종합 가이드',               url:'https://thesis-guide-app.fly.dev',              desc:'논문 주제 선정부터 작성·발표·심사까지 단계별 AI 가이드를 제공합니다.', thumbId:'thesis', subLabel:'논문마스터' },
+  { dept:'기획',      name:'기업 경쟁력 분석',                   url:'https://greeme99.github.io/CCA/?v=ba4844b',     desc:'재무·영업·운영·기술·인재 5개 축으로 기업 경쟁력을 AI가 종합 진단·분석합니다.', thumbId:'cca' },
+  { dept:'기타',      name:'인생 수레바퀴',                      url:'https://greeme99.github.io/mkj/life-wheel',     desc:'AI 기반 삶의 균형 진단 도구. 8개 영역 점수를 시각화하고 코칭 인사이트를 제공합니다.', thumbId:'wheel', subLabel:'코칭 Tool' },
+  { dept:'AX PMO',    name:'AX Platform',                       url:'https://greeme99.github.io/mkj/ax_platform',    desc:'AX 과제 전체를 관리·모니터링하는 플랫폼. 진행 현황과 성과를 대시보드로 확인합니다.', thumbId:'ax' },
+];
+
+/* ─── RENDER ─── */
+let cur = 'all';
+
+function render(f) {
+  const list = f === 'all' ? TASKS : TASKS.filter(t => t.dept === f);
+  const grid = document.getElementById('grid');
+  document.getElementById('hpill').textContent = list.length + '건 사례';
+
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">해당 부서의 과제가 없습니다.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(t => {
+    const cfg = DC[t.dept] || DC['기타'];
+    const label = t.subLabel ? t.dept + ' · ' + t.subLabel : t.dept;
+    return `<a class="card" href="${t.url}" target="_blank" rel="noopener noreferrer">
+      <div class="thumb">${thumb(t)}</div>
+      <div class="cbody">
+        <span class="dept-tag" style="background:${cfg.bg};color:${cfg.color}">${cfg.emoji} ${label}</span>
+        <div class="cname">${t.name}</div>
+        <div class="cdesc">${t.desc}</div>
+        <div class="cfoot">
+          <span class="sbadge"><span class="sdot"></span>완료</span>
+          <span class="btn-run">앱 실행 <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+/* ─── FILTERS ─── */
+document.querySelectorAll('.fbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    cur = btn.dataset.f;
+    render(cur);
+  });
+});
+
+/* INIT */
+render('all');
+</script>
+</body>
+</html>
