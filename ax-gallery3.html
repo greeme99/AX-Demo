@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AX 과제 갤러리</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #697386;
+      --line: #dde4ef;
+      --blue: #2563eb;
+      --blue-2: #0f4fd0;
+      --green: #159667;
+      --orange: #c46a16;
+      --red: #c74343;
+      --purple: #7357d4;
+      --teal: #0f8c9d;
+      --shadow: 0 12px 36px rgba(23, 32, 51, 0.08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 20px;
+      align-items: center;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 16px 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 8px;
+      background: #eaf1ff;
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn,
+    .primary-btn,
+    .ghost-btn,
+    .icon-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: 140ms ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn {
+      padding: 9px 13px;
+      font-size: 13px;
+    }
+
+    .filter-btn:hover,
+    .ghost-btn:hover,
+    .icon-btn:hover {
+      border-color: #b7c6dd;
+      box-shadow: 0 6px 18px rgba(23, 32, 51, 0.07);
+    }
+
+    .filter-btn.active {
+      border-color: var(--blue);
+      background: #eaf1ff;
+      color: var(--blue-2);
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .primary-btn:hover {
+      background: var(--blue-2);
+      border-color: var(--blue-2);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.24);
+    }
+
+    .hero {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 28px 28px 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-copy {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--blue-2);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .hero h2 {
+      margin: 0;
+      max-width: 900px;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero-text {
+      margin: 16px 0 0;
+      max-width: 880px;
+      color: #42506a;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      max-width: 920px;
+    }
+
+    .metric-title {
+      margin: 22px 0 0;
+      color: #22304a;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 13px 14px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .brief-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .brief-panel h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .brief-list {
+      display: grid;
+      gap: 11px;
+      margin-top: 16px;
+    }
+
+    .brief-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .brief-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #edf7f8;
+      color: var(--teal);
+      font-weight: 900;
+    }
+
+    .brief-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .brief-item span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .controls {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 8px 28px 22px;
+      display: grid;
+      grid-template-columns: 1fr 230px 220px;
+      gap: 12px;
+    }
+
+    .search,
+    .select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      padding: 0 13px;
+    }
+
+    .search:focus,
+    .select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .content {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 0 28px 52px;
+    }
+
+    .section {
+      margin-top: 10px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 22px 0 12px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 344px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 1px 2px rgba(23, 32, 51, 0.04);
+      overflow: hidden;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #b9c8df;
+      box-shadow: var(--shadow);
+    }
+
+    .thumb {
+      position: relative;
+      height: 132px;
+      background: #eef3fb;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: top left;
+      transition: 180ms ease;
+    }
+
+    .card:hover .thumb img {
+      transform: scale(1.025);
+    }
+
+    .thumb-label {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      max-width: calc(100% - 20px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 7px;
+      padding: 5px 8px;
+      background: rgba(15, 23, 42, 0.72);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fallback-thumb {
+      height: 100%;
+      padding: 13px;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.13), rgba(21, 150, 103, 0.13)),
+        #f8fbff;
+    }
+
+    .visual-thumb {
+      height: 100%;
+      padding: 12px;
+      background: #f8fbff;
+    }
+
+    .visual-screen {
+      height: 100%;
+      border: 1px solid #d7e1ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 8px;
+    }
+
+    .visual-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .visual-head b {
+      color: #22304a;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .visual-pill {
+      width: 46px;
+      height: 8px;
+      border-radius: 999px;
+      background: #c7d7f7;
+    }
+
+    .visual-body {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .visual-kpis {
+      display: grid;
+      gap: 6px;
+    }
+
+    .visual-kpi {
+      border-radius: 7px;
+      background: #f1f5fb;
+      padding: 7px;
+    }
+
+    .visual-kpi strong {
+      display: block;
+      color: var(--blue-2);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .visual-kpi span {
+      display: block;
+      margin-top: 5px;
+      color: #697386;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .visual-table {
+      display: grid;
+      gap: 5px;
+      align-content: start;
+      border-radius: 7px;
+      background: #f8fafc;
+      padding: 8px;
+    }
+
+    .visual-row {
+      height: 9px;
+      border-radius: 999px;
+      background: #d6deeb;
+    }
+
+    .visual-row.hot {
+      background: #fecaca;
+    }
+
+    .visual-row.good {
+      background: #bbf7d0;
+    }
+
+    .visual-chart {
+      display: flex;
+      align-items: end;
+      gap: 5px;
+      min-height: 0;
+      border-radius: 7px;
+      background: #f1f5fb;
+      padding: 7px;
+    }
+
+    .visual-chart span {
+      flex: 1;
+      border-radius: 5px 5px 0 0;
+      background: var(--blue);
+    }
+
+    .mini-dashboard {
+      height: 100%;
+      border: 1px solid #d7e1ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-rows: 20px 1fr 18px;
+      gap: 8px;
+    }
+
+    .mini-top {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d5dce8;
+    }
+
+    .mini-title {
+      width: 52%;
+      height: 8px;
+      margin-left: 4px;
+      border-radius: 999px;
+      background: #c7d7f7;
+    }
+
+    .chart {
+      display: flex;
+      align-items: end;
+      gap: 6px;
+      height: 66px;
+      padding: 7px;
+      border-radius: 6px;
+      background: #f3f6fb;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 0;
+      border-radius: 4px 4px 0 0;
+      background: var(--blue);
+      opacity: 0.78;
+    }
+
+    .panel-lines {
+      display: grid;
+      gap: 6px;
+      align-content: center;
+      padding: 8px;
+      border-radius: 6px;
+      background: #f3f6fb;
+    }
+
+    .line {
+      height: 7px;
+      border-radius: 999px;
+      background: #d6deeb;
+    }
+
+    .mini-foot {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .mini-chip {
+      border-radius: 5px;
+      background: #edf2fb;
+    }
+
+    .erp-modules {
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto 1fr;
+      gap: 8px;
+      border: 1px solid #d7e1ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .erp-head {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .erp-head b {
+      color: var(--blue-2);
+      font-size: 13px;
+    }
+
+    .erp-head span {
+      width: 46px;
+      height: 8px;
+      border-radius: 999px;
+      background: #c7d7f7;
+    }
+
+    .erp-tile {
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: #f1f5fb;
+      color: #33415c;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 11px;
+      padding: 15px;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dept {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      color: #33415c;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dept-icon {
+      display: inline-grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .status {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: #eef8f3;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .status.todo {
+      background: #fff5e9;
+      color: var(--orange);
+    }
+
+    .card h4 {
+      margin: 0;
+      min-height: 48px;
+      font-size: 16px;
+      line-height: 1.48;
+    }
+
+    .desc {
+      margin: 0;
+      min-height: 60px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .chip {
+      border: 1px solid #dbe4f0;
+      border-radius: 999px;
+      padding: 5px 8px;
+      color: #4b5a73;
+      background: #fbfcff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 4px;
+      color: var(--blue-2);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .empty {
+      display: none;
+      border: 1px dashed #bdc9dc;
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--muted);
+      padding: 28px;
+      text-align: center;
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      background: rgba(15, 23, 42, 0.46);
+    }
+
+    .drawer.open {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 940px);
+    }
+
+    .drawer-panel {
+      grid-column: 2;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-width: 0;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -22px 0 45px rgba(15, 23, 42, 0.22);
+    }
+
+    .drawer-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-title h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .drawer-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .drawer-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ghost-btn,
+    .icon-btn {
+      height: 38px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .icon-btn {
+      width: 38px;
+      padding: 0;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .runner {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 0;
+    }
+
+    .runner-info {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px 18px;
+      background: #f8fafd;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .info-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 11px;
+      min-width: 0;
+    }
+
+    .info-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .info-box b {
+      display: block;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border: 0;
+      background: #fff;
+    }
+
+    .fallback {
+      display: none;
+      place-items: center;
+      min-height: 420px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .fallback strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 18px;
+    }
+
+    .create-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    .create-modal.open {
+      display: grid;
+    }
+
+    .create-card {
+      width: min(720px, 100%);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .create-card header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .create-card h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .create-body {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .idea-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .idea {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcff;
+    }
+
+    .idea b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .idea span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1180px) {
+      .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metrics,
+      .runner-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .drawer.open {
+        grid-template-columns: 1fr;
+      }
+
+      .drawer-panel {
+        grid-column: 1;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar-inner,
+      .hero,
+      .controls,
+      .content {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .grid,
+      .metrics,
+      .runner-info,
+      .idea-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        min-height: 320px;
+      }
+
+      .drawer-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .drawer-head {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <nav class="topbar" aria-label="AX 과제 필터">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark">AX</div>
+          <div>
+            <h1>AX 과제 갤러리</h1>
+            <p>전자부품, 배터리/ESS, 소형 전자제품 제조사를 위한 기능별 AI 적용 데모 포털</p>
+          </div>
+        </div>
+        <div class="actions" id="categoryFilters">
+          <button class="filter-btn active" data-category="all">전체</button>
+          <button class="filter-btn" data-category="업무 자동화">업무 자동화</button>
+          <button class="filter-btn" data-category="기간 시스템">기간 시스템</button>
+          <button class="filter-btn" data-category="기타">기타</button>
+          <button class="primary-btn" id="createBtn" type="button">+ Create New</button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">AX EDUCATION / EXECUTIVE DEMO / PMO PORTFOLIO</p>
+        <h2>전사 부서별 AI 적용 과제 현황</h2>
+        <div class="metric-title">과제 현황</div>
+        <div class="metrics">
+          <div class="metric"><b id="metricTotal">24개</b><span>등록 과제</span></div>
+          <div class="metric"><b id="metricDept">18개</b><span>부서/기능</span></div>
+          <div class="metric"><b id="metricOther">6개</b><span>기타</span></div>
+          <div class="metric"><b id="metricDemo">24개</b><span>실행가능 앱</span></div>
+        </div>
+      </div>
+      <aside class="brief-panel" aria-label="교육 진행 포인트">
+        <h3>교육/설명 진행 포인트</h3>
+        <div class="brief-list">
+          <div class="brief-item">
+            <div class="brief-icon">01</div>
+            <div><strong>업무 자동화</strong><span>반복 보고, 분석, 규정 질의, 시뮬레이션을 빠르게 데모해 현업 체감도를 높입니다.</span></div>
+          </div>
+          <div class="brief-item">
+            <div class="brief-icon">02</div>
+            <div><strong>기간 시스템</strong><span>ERP, MES, SCM, PLM, EIS의 데이터 흐름에 AI를 얹는 방향을 설명합니다.</span></div>
+          </div>
+          <div class="brief-item">
+            <div class="brief-icon">03</div>
+            <div><strong>PMO 운영</strong><span>부서별 과제 후보, PoC 우선순위, Crew 역할 분담을 한 화면에서 논의합니다.</span></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="controls" aria-label="검색 및 부서 필터">
+      <input class="search" id="searchInput" type="search" placeholder="과제명, 부서, 적용 시나리오 검색" />
+      <select class="select" id="deptSelect" aria-label="부서 선택">
+        <option value="all">전체 부서</option>
+      </select>
+      <select class="select" id="industrySelect" aria-label="업종 선택">
+        <option value="all">전체 업종</option>
+        <option value="전자부품">전자부품</option>
+        <option value="배터리/ESS">배터리/ESS</option>
+        <option value="소형전자">소형전자</option>
+      </select>
+    </section>
+
+    <section class="content" id="content"></section>
+  </main>
+
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <div class="drawer-title">
+          <h3 id="drawerTitle">앱 실행</h3>
+          <p id="drawerDesc"></p>
+        </div>
+        <div class="drawer-actions">
+          <button class="ghost-btn" id="openNewBtn" type="button">새 창 실행</button>
+          <button class="icon-btn" id="closeDrawer" type="button" aria-label="닫기">×</button>
+        </div>
+      </div>
+      <div class="runner">
+        <div class="runner-info">
+          <div class="info-box"><span>카테고리</span><b id="runCategory"></b></div>
+          <div class="info-box"><span>부서/기능</span><b id="runDept"></b></div>
+          <div class="info-box"><span>상태</span><b id="runStatus"></b></div>
+        </div>
+        <iframe id="appFrame" title="AX 데모 앱"></iframe>
+        <div class="fallback" id="fallback">
+          <div>
+            <strong>이 항목은 외부 실행 링크가 없습니다.</strong>
+            <span>노션 페이지 또는 PMO 과제 후보로 검토할 수 있는 항목입니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="create-modal" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+    <div class="create-card">
+      <header>
+        <div>
+          <h3 id="createTitle">신규 AX 과제 발굴 템플릿</h3>
+          <p class="desc">아래 질문으로 현업 인터뷰를 시작하면 카드형 과제 후보로 바로 전환할 수 있습니다.</p>
+        </div>
+        <button class="icon-btn" id="closeCreate" type="button" aria-label="닫기">×</button>
+      </header>
+      <div class="create-body">
+        <div class="idea-grid">
+          <div class="idea"><b>반복 업무</b><span>매일/매주 엑셀, 메일, 보고서로 반복되는 작업은 무엇인가?</span></div>
+          <div class="idea"><b>판단 업무</b><span>숙련자 경험에 의존하는 품질, 설비, 구매, 수요 판단은 무엇인가?</span></div>
+          <div class="idea"><b>데이터 연결</b><span>ERP, MES, SCM, PLM 사이에 끊기는 정보 흐름은 어디인가?</span></div>
+          <div class="idea"><b>교육 데모</b><span>5분 안에 효과를 보여줄 수 있는 화면, 지표, 알림은 무엇인가?</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tasks = [
+      { category: "업무 자동화", dept: "개발", title: "PCB 수율 최적 시뮬레이션", status: "완료", url: "https://greeme99.github.io/PCB-Yield-Visualizer/", desc: "PCB 불량 유형, 공정 조건, 검사 결과를 조합해 수율 개선 포인트를 시뮬레이션합니다.", industries: ["전자부품", "소형전자"], function: "R&D/공정개발" },
+      { category: "업무 자동화", dept: "물류/자재관리", title: "재고관리 시스템", status: "완료", url: "https://greeme99.github.io/mkj/swm.html", desc: "자재 입출고, 안전재고, 장기재고를 대시보드로 확인하고 구매/생산 의사결정을 지원합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "SCM/자재" },
+      { category: "업무 자동화", dept: "제조", title: "생산실적 관리", status: "시작 전", url: "https://script.google.com/macros/s/AKfycbwTMeglYbwUCq1QwoeBsXc3F6MF5Pzxvc8zcu62ARUpIUit4H-jE2gXEaHCDXyGDbc9/exec", desc: "라인별 생산 실적, 계획 대비 달성률, 작업 지연 사유를 자동 집계해 일일 보고를 줄입니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "제조운영" },
+      { category: "업무 자동화", dept: "제조기술", title: "VLM-AOI", status: "시작 전", url: "https://greeme99.github.io/AX-AOI/", desc: "비전 언어 모델로 AOI 이미지를 해석하고 불량 유형 설명, 재검 기준, 조치 가이드를 제공합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "검사/공정기술" },
+      { category: "업무 자동화", dept: "제조기술", title: "동작분석&라인 밸런스 시스템", status: "완료", url: "https://greeme99.github.io/mkj/vlm-prism", desc: "작업 동작과 공정 시간을 분석해 병목 공정, 표준작업, 라인 밸런싱 개선안을 제시합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "IE/생산기술" },
+      { category: "업무 자동화", dept: "품질", title: "공정능력지수 산출", status: "완료", url: "https://greeme99.github.io/mkj/pca", desc: "측정 데이터를 기반으로 Cp, Cpk를 자동 산출하고 관리 한계 이탈을 빠르게 식별합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "품질관리" },
+      { category: "업무 자동화", dept: "인사", title: "인사규정 챗봇", status: "완료", url: "https://greeme99.github.io/hr_chabot/", desc: "취업규칙, 복리후생, 근태 기준을 자연어로 질의하고 HR 문의 대응 시간을 줄입니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "HR" },
+      { category: "업무 자동화", dept: "구매", title: "비철금속 시세 분석", status: "완료", url: "https://script.google.com/macros/s/AKfycbzARjJO5Pma7rbJa30HDzsw3ibusLN1goopON5fQ0YOn7oPMukojl9jsFYCv5s230HCDw/exec", desc: "구리, 알루미늄, 니켈 등 원자재 시세를 모니터링하고 구매 타이밍과 견적 검토를 지원합니다.", industries: ["전자부품", "배터리/ESS"], function: "구매/원가" },
+      { category: "업무 자동화", dept: "재무", title: "환율 현황 모니터링", status: "완료", url: "https://script.google.com/macros/s/AKfycbyykOIfCTfqnxxH_9pg3BdnkpbyliZEx5aRoFTX8i7I8ICGjfgxogLmIsaJASQbAq2URw/exec", desc: "주요 통화 환율 변동을 추적해 수출입, 원가, 결제 리스크를 경영층에 빠르게 공유합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "재무/관리회계" },
+      { category: "업무 자동화", dept: "기획", title: "기업 경쟁력 분석", status: "완료", url: "https://greeme99.github.io/CCA/", desc: "경쟁사, 제품 포트폴리오, 재무/시장 지표를 비교해 전략 과제와 투자 우선순위를 정리합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "전략기획" },
+      { category: "업무 자동화", dept: "영업", title: "판매현황 Dashboard", status: "완료", url: "https://greeme99.github.io/mkj/sales_dashboard", desc: "고객, 제품군, 지역별 매출과 수주 흐름을 분석해 영업 회의용 인사이트를 제공합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "영업/마케팅" },
+      { category: "업무 자동화", dept: "품질", title: "실험계획법(DOE) 마스터", status: "완료", url: "https://greeme99.github.io/DOE/doe/", desc: "공정 조건 최적화를 위한 DOE 설계, 결과 해석, 개선 조건 도출을 현업 친화적으로 지원합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "품질/공정개선" },
+
+      { category: "기간 시스템", dept: "AX-Hub", title: "AX Platform", status: "완료", url: "https://greeme99.github.io/mkj/ax_platform/#", desc: "부서별 AI 앱, 데이터 연결, 과제 운영 현황을 통합해 AX 거버넌스의 허브로 활용합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "AX PMO" },
+      { category: "기간 시스템", dept: "MES", title: "제조 종합 Portal", status: "완료", url: "https://ax-mes.vercel.app", desc: "생산, 품질, 설비, 작업지시 데이터를 통합해 현장 운영과 이상 대응을 한 화면에서 관리합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "MES" },
+      { category: "기간 시스템", dept: "ERP", title: "Standard ERP", status: "완료", url: "https://greeme99.github.io/AX-ERP/dashboard", desc: "영업, 구매, 생산, 회계 기준 데이터를 통합하고 AI 리포팅과 예측 분석의 기준 정보로 사용합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "ERP" },
+      { category: "기간 시스템", dept: "EIS", title: "Executive Information System", status: "시작 전", url: "https://greeme99.github.io/AX-EIS/eis_prototype_v3.html", desc: "경영층이 매출, 손익, 생산성, 품질, 재고 리스크를 실시간으로 보는 의사결정 대시보드입니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "경영정보" },
+      { category: "기간 시스템", dept: "SCM", title: "SCM Portal", status: "완료", url: "https://ax-scm.streamlit.app/", desc: "수요, 발주, 납기, 공급 리스크를 연결해 협력사와 사내 공급망의 병목을 관리합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "SCM" },
+      { category: "기간 시스템", dept: "R&D(PLM)", title: "R&D Portal", status: "완료", url: "https://greeme99.github.io/AX-PLM/", desc: "BOM, 도면, 변경관리, 개발 이슈를 연결해 개발부터 양산 이관까지의 지식 흐름을 관리합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "PLM/R&D" },
+
+      { category: "기타", dept: "여행 블로그", title: "여행 블로그", status: "시작 전", url: "https://winebeltblog-mkuswghy.manus.space/", desc: "비제조 예시이지만 콘텐츠 생성, 이미지 구성, 자동 게시 흐름을 마케팅 교육용으로 전환할 수 있습니다.", industries: ["소형전자"], function: "콘텐츠 자동화" },
+      { category: "기타", dept: "여행 Planner", title: "여행 Planner", status: "시작 전", url: "https://osakaguide-zbnymgsy.manus.space", desc: "일정 추천형 UX를 고객 방문, 전시회, 협력사 실사 계획 수립 데모로 응용할 수 있습니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "업무지원" },
+      { category: "기타", dept: "사주&운세", title: "사주&운세", status: "시작 전", url: "https://fortunetell-ajmjathc.manus.space", desc: "대화형 인터페이스, 개인화 추천, 설명 가능한 응답 패턴을 챗봇 교육 샘플로 활용합니다.", industries: ["소형전자"], function: "챗봇 UX" },
+      { category: "기타", dept: "나만의 컬러 (PCA)", title: "Personal Color Analysis", status: "완료", url: "https://personal-color-one.vercel.app/", desc: "이미지 기반 분류와 추천 흐름을 제품 외관 검사, 디자인 리뷰, 고객 취향 분석 예시로 확장합니다.", industries: ["소형전자"], function: "비전/추천" },
+      { category: "기타", dept: "코칭 Tool", title: "인생 수레바퀴", status: "완료", url: "https://greeme99.github.io/mkj/life-wheel", desc: "자가진단형 설문과 시각화 패턴을 조직문화, 교육 니즈, AX 준비도 진단으로 응용합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "조직개발" },
+      { category: "기타", dept: "논문마스터", title: "논문 101 종합 가이드", status: "완료", url: "https://thesis-guide-app.fly.dev", desc: "문서 작성 코칭과 지식 가이드를 사내 표준서, 기술 보고서, 특허 초안 작성 교육에 활용합니다.", industries: ["전자부품", "배터리/ESS", "소형전자"], function: "지식관리" }
+    ];
+
+    const categoryDescriptions = {
+      "업무 자동화": "반복 보고, 분석, 질의응답, 시뮬레이션 등 현업 생산성을 바로 높이는 과제",
+      "기간 시스템": "ERP, MES, SCM, PLM, EIS 등 핵심 시스템의 데이터와 AI를 연결하는 과제",
+      "기타": "비제조 데모를 교육, 조직문화, 마케팅, 지식관리 관점으로 응용하는 과제"
+    };
+
+    const colors = ["#2563eb", "#0f8c9d", "#159667", "#7357d4", "#c46a16", "#c74343"];
+    const content = document.getElementById("content");
+    const searchInput = document.getElementById("searchInput");
+    const deptSelect = document.getElementById("deptSelect");
+    const industrySelect = document.getElementById("industrySelect");
+    const categoryFilters = document.getElementById("categoryFilters");
+    const drawer = document.getElementById("drawer");
+    const appFrame = document.getElementById("appFrame");
+    const fallback = document.getElementById("fallback");
+    const openNewBtn = document.getElementById("openNewBtn");
+    let activeCategory = "all";
+    let currentUrl = "";
+
+    function iconText(dept) {
+      const compact = dept.replace(/[()&/\s]/g, "");
+      return compact.slice(0, 2).toUpperCase();
+    }
+
+    function getFilteredTasks() {
+      const q = searchInput.value.trim().toLowerCase();
+      const dept = deptSelect.value;
+      const industry = industrySelect.value;
+      return tasks.filter((task) => {
+        const haystack = [task.category, task.dept, task.title, task.desc, task.function, task.industries.join(" ")].join(" ").toLowerCase();
+        return (activeCategory === "all" || task.category === activeCategory)
+          && (dept === "all" || task.dept === dept)
+          && (industry === "all" || task.industries.includes(industry))
+          && (!q || haystack.includes(q));
+      });
+    }
+
+    const thumbnails = [
+      "assets/thumbs/01-pcb.png",
+      "assets/thumbs/02-.png",
+      "",
+      "assets/thumbs/04-vlm-aoi.png",
+      "assets/thumbs/05-.png",
+      "assets/thumbs/06-.png",
+      "assets/thumbs/07-.png",
+      "",
+      "",
+      "assets/thumbs/10-.png",
+      "assets/thumbs/11-dashboard.png",
+      "",
+      "assets/thumbs/13-ax-platform.png",
+      "assets/thumbs/14-portal.png",
+      "assets/thumbs/15-standard-erp-notion-latest.png?v=20260709-erp-notion",
+      "assets/thumbs/16-executive-information-system.png",
+      "assets/thumbs/17-scm-portal.png",
+      "assets/thumbs/18-r-d-portal.png",
+      "assets/thumbs/19-.png",
+      "assets/thumbs/20-planner.png",
+      "assets/thumbs/21-.png",
+      "assets/thumbs/22-personal-color-analysis.png",
+      "assets/thumbs/23-.png",
+      "assets/thumbs/24-101.png"
+    ];
+
+    function makeThumb(seed, task, globalIndex) {
+      const image = thumbnails[globalIndex];
+      if (image) {
+        return `<img src="${image}" alt="${task.title} 화면 미리보기" loading="lazy" /><span class="thumb-label">${task.title}</span>`;
+      }
+      if (task.title === "생산실적 관리") {
+        return visualThumb("생산실적 관리", ["98%", "1,248", "12"], ["달성률", "금일 생산", "지연 건"], ["good", "", "", "hot", ""]);
+      }
+      if (task.title === "비철금속 시세 분석") {
+        return visualThumb("비철금속 시세", ["Cu", "Al", "Ni"], ["구리 상승", "알루미늄 보합", "니켈 변동"], ["hot", "", "good", "", ""]);
+      }
+      if (task.title === "환율 현황 모니터링") {
+        return visualThumb("환율 모니터링", ["USD", "JPY", "EUR"], ["원가 영향", "수출입 결제", "헤지 검토"], ["", "hot", "", "good", ""]);
+      }
+      if (task.title === "실험계획법(DOE) 마스터") {
+        return visualThumb("DOE Auto", ["L9", "S/N", "최적"], ["실험배치", "요인효과", "조건추천"], ["good", "", "", "hot", ""]);
+      }
+      const heights = [34, 58, 46, 72, 51].map((h, idx) => Math.max(24, h + ((seed + idx * 11) % 18) - 9));
+      return `
+        <div class="fallback-thumb">
+          <div class="mini-dashboard">
+            <div class="mini-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mini-title"></span></div>
+            <div class="chart">${heights.map((h, idx) => `<span class="bar" style="height:${h}%;background:${colors[(seed + idx) % colors.length]}"></span>`).join("")}</div>
+            <div class="panel-lines"><span class="line" style="width:82%"></span><span class="line" style="width:66%"></span><span class="line" style="width:74%"></span><span class="line" style="width:48%"></span></div>
+            <div class="mini-foot"><span class="mini-chip"></span><span class="mini-chip"></span><span class="mini-chip"></span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function visualThumb(title, values, labels, rowKinds) {
+      const bars = [42, 68, 54, 82, 61, 46];
+      return `
+        <div class="visual-thumb">
+          <div class="visual-screen">
+            <div class="visual-head"><b>${title}</b><span class="visual-pill"></span></div>
+            <div class="visual-body">
+              <div class="visual-kpis">
+                ${values.map((value, idx) => `<div class="visual-kpi"><strong>${value}</strong><span>${labels[idx]}</span></div>`).join("")}
+              </div>
+              <div class="visual-table">
+                <div class="visual-chart">${bars.map((bar, idx) => `<span style="height:${bar}%;background:${colors[idx % colors.length]}"></span>`).join("")}</div>
+                ${rowKinds.map((kind, idx) => `<span class="visual-row ${kind}" style="width:${86 - idx * 7}%"></span>`).join("")}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function card(task, index) {
+      const statusClass = task.status === "완료" ? "" : " todo";
+      const launchText = task.url ? "카드 클릭으로 앱 실행" : "데모 링크 없음";
+      const globalIndex = tasks.indexOf(task);
+      return `
+        <article class="card" tabindex="0" role="button" data-index="${tasks.indexOf(task)}" aria-label="${task.title} 실행">
+          <div class="thumb">${makeThumb(index + task.dept.length, task, globalIndex)}</div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div class="dept"><span class="dept-icon" style="background:${colors[index % colors.length]}">${iconText(task.dept)}</span><span>${task.dept}</span></div>
+              <span class="status${statusClass}">${task.status}</span>
+            </div>
+            <h4>${task.title}</h4>
+            <p class="desc">${task.desc}</p>
+            <div class="chips">
+              <span class="chip">${task.function}</span>
+              ${task.industries.map((name) => `<span class="chip">${name}</span>`).join("")}
+            </div>
+            <div class="card-foot"><span>${task.category}</span><span>${launchText}</span></div>
+          </div>
+        </article>
+      `;
+    }
+
+    function render() {
+      const filtered = getFilteredTasks();
+      const groups = ["업무 자동화", "기간 시스템", "기타"];
+      content.innerHTML = groups.map((group) => {
+        const list = filtered.filter((task) => task.category === group);
+        if (!list.length) return "";
+        return `
+          <section class="section">
+            <div class="section-head">
+              <div>
+                <h3>${group}</h3>
+                <p>${categoryDescriptions[group]}</p>
+              </div>
+              <span class="count">${list.length}개 과제</span>
+            </div>
+            <div class="grid">${list.map(card).join("")}</div>
+          </section>
+        `;
+      }).join("") + `<div class="empty" id="emptyState">검색 조건에 맞는 과제가 없습니다.</div>`;
+
+      const empty = document.getElementById("emptyState");
+      empty.style.display = filtered.length ? "none" : "block";
+      bindCards();
+    }
+
+    function bindCards() {
+      document.querySelectorAll(".card").forEach((node) => {
+        const open = () => openTask(tasks[Number(node.dataset.index)]);
+        node.addEventListener("click", open);
+        node.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            open();
+          }
+        });
+      });
+    }
+
+    function openTask(task) {
+      currentUrl = task.url;
+      document.getElementById("drawerTitle").textContent = task.title;
+      document.getElementById("drawerDesc").textContent = task.desc;
+      document.getElementById("runCategory").textContent = task.category;
+      document.getElementById("runDept").textContent = task.dept;
+      document.getElementById("runStatus").textContent = task.status;
+      openNewBtn.disabled = !task.url;
+      drawer.classList.add("open");
+      if (task.url) {
+        fallback.style.display = "none";
+        appFrame.style.display = "block";
+        appFrame.src = task.url;
+      } else {
+        appFrame.removeAttribute("src");
+        appFrame.style.display = "none";
+        fallback.style.display = "grid";
+      }
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove("open");
+      appFrame.removeAttribute("src");
+      currentUrl = "";
+    }
+
+    function initFilters() {
+      const departments = [...new Set(tasks.map((task) => task.dept))].sort((a, b) => a.localeCompare(b, "ko"));
+      deptSelect.innerHTML += departments.map((dept) => `<option value="${dept}">${dept}</option>`).join("");
+      document.getElementById("metricTotal").textContent = "24개";
+      document.getElementById("metricDept").textContent = "18개";
+      document.getElementById("metricOther").textContent = "6개";
+      document.getElementById("metricDemo").textContent = "24개";
+    }
+
+    categoryFilters.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-category]");
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      document.querySelectorAll("[data-category]").forEach((item) => item.classList.toggle("active", item === button));
+      render();
+    });
+
+    searchInput.addEventListener("input", render);
+    deptSelect.addEventListener("change", render);
+    industrySelect.addEventListener("change", render);
+    document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+    drawer.addEventListener("click", (event) => {
+      if (event.target === drawer) closeDrawer();
+    });
+    openNewBtn.addEventListener("click", () => {
+      if (currentUrl) window.open(currentUrl, "_blank", "noopener,noreferrer");
+    });
+
+    const createModal = document.getElementById("createModal");
+    document.getElementById("createBtn").addEventListener("click", () => createModal.classList.add("open"));
+    document.getElementById("closeCreate").addEventListener("click", () => createModal.classList.remove("open"));
+    createModal.addEventListener("click", (event) => {
+      if (event.target === createModal) createModal.classList.remove("open");
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeDrawer();
+        createModal.classList.remove("open");
+      }
+    });
+
+    initFilters();
+    render();
+  </script>
+</body>
+</html>
